@@ -1,10 +1,9 @@
 export type TokenResult = {
     token?: string;
     quantity: number;
-    averagePrice?: number;
+    averagePrice: string;
     currentPrice?: number;
     totalPaid: number;
-    totalValue?: number;
     yield?: number;
     walletPercentage?: number;
   };
