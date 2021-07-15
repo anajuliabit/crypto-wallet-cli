@@ -1,3 +1,4 @@
 /node_modules
 transactions.json
 .env
+build
