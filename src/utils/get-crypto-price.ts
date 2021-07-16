@@ -1,23 +1,14 @@
 import axios from 'axios';
 
-type CryptoQuote = {
-    quote: {
-        USD: {
-            price: string
-        }
-    }
-};
+type PriceResponse = {
+    [index: string]: { usd: string }
+}
 
-export async function getCryptoPrice(crypto: string): Promise<string | undefined> {
+export async function getCryptoPrice(currencies: string[]): Promise<PriceResponse | undefined> {
     try {
-        const { data: { data } } =  await axios.get(
-            `${process.env.CMC_API_URL}/quotes/latest?symbol=${crypto}`, 
-            { headers: { 'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY } }
-        );
-
-        const cryptos: CryptoQuote[] = Object.values(data) as CryptoQuote[];
+        const { data } = await axios.get(`${process.env.API_URL}/simple/price?ids=${currencies.join(',')}&vs_currencies=usd`);
         
-        return cryptos[0].quote?.USD?.price;
+        return data as PriceResponse;
 
     } catch(err) {
         console.log('API call error:', err);
