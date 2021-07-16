@@ -1,10 +1,10 @@
 export type Cryptocurrency = {
-    token: string;
+    coin: string;
     quantity: number;
     averagePrice: number;
     currentPrice: number;
     totalPaid: number;
-    yield: number;
+    profit: number;
     walletPercentage?: number;
   };
   

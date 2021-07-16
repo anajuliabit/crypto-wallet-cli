@@ -4,12 +4,12 @@ export enum TransactionType {
 }
 
 export type Transaction = {
-    token: string;
+    coin: string;
     quantity: number;
     orderPrice: number;
     totalPaid: number;
     fees?: number;
-    type?: TransactionType;
+    type: TransactionType;
     date?: Date;
   };
   
