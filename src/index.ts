@@ -13,28 +13,32 @@ cli.version('0.0.1').option('-p, --path <path>', 'Path to transactions file').pa
 const { path } = cli.opts();
 const { transactions } = JSON.parse(fs.readFileSync(path, "utf8"));
 
-let currentValue: number;
+let totalCost: number;
 
-async function output() {
+async function createOutput() {
     const table = new Table({ head: [
         'Coin', 
         'Quantity',
+        'Total paid',
+        'Current value',
         'Average price',
         'Current price',
-        'Total paid',
         'Profit %',
         'Wallet %',
       ]});
     
     const portfolio = await getPortfolio(transactions as Transaction[]);
 
-    portfolio.forEach(crypto => {
-        table.push(Object.values(crypto))
+    portfolio.map(crypto => {
+        const { profit } = crypto;
+        crypto.coin = chalk.bold(crypto.coin);
+        crypto.profit = Number(profit) > 0 ? chalk.green(profit) : chalk.redBright(Number(profit) * -1);
+        table.push(Object.values(crypto));
     });
     
-    const totalCost: number = portfolio.reduce((acc, crypto) => acc + crypto.totalPaid, 0); 
+    const currentValue = portfolio.reduce((acc, crypto) => acc += crypto.quantity * crypto.currentPrice, 0);
     const profit: number =  ((currentValue/totalCost - 1) * 100);
-    const profitFormat = Number((profit < 1 ? profit * - 1 : profit).toFixed(2));
+    const profitFormat = (profit < 1 ? profit * - 1 : profit).toFixed(2);
 
     console.log('Total cost:', chalk.blue(totalCost, '$'));
     console.log('Current value $:', chalk.blue(currentValue, '$'));
@@ -48,13 +52,11 @@ async function getPortfolio(transactions: Transaction[]): Promise<Cryptocurrency
     let portfolio: Cryptocurrency[] = []; 
 
     transactionsMap.forEach((transactions: Transaction[]) => {
-        const result = transactions.reduce(reduceTransactions, { coin: transactions[0].coin.toLocaleUpperCase(), quantity: 0, totalPaid: 0 } as Cryptocurrency);
-        result.averagePrice = Number((result.totalPaid / result.quantity));
-        
+        const result = transactions.reduce(reduceTransactions, { coin: transactions[0].coin.toLocaleUpperCase(), quantity: 0, totalPaid: 0 } as Cryptocurrency);        
         portfolio.push(result);
     });
 
-    return await addInformations(portfolio);
+    return await calculateCryptoResult(portfolio);
 }
 
 
@@ -73,29 +75,31 @@ const reduceTransactions = (accumulator: Cryptocurrency, transaction: Transactio
     return accumulator;
 }
 
-const addInformations = async(portfolio: Cryptocurrency[]): Promise<Cryptocurrency[]> => {
+const calculateCryptoResult = async(portfolio: Cryptocurrency[]): Promise<Cryptocurrency[]> => {
 
     const tokens = portfolio.map(currency => currency.coin);
     const prices = await getCryptoPrice(tokens);
 
     portfolio.map(crypto => {
-        const { coin, averagePrice } = crypto;  
-        const { usd } = prices![coin.toLocaleLowerCase()];
+        const { usd } = prices![crypto.coin.toLocaleLowerCase()];
         const price = Number(usd);
-        
-        crypto.currentPrice = price;
-        crypto.profit = (price/averagePrice - 1) * 100;
+
+        crypto.totalPaid =  Number(crypto.totalPaid.toFixed(2));
+        crypto.currentValue = Number((crypto.quantity * price).toFixed(2))
+        crypto.averagePrice = Number((crypto.totalPaid / crypto.quantity).toFixed(2));
+        crypto.currentPrice = Number(price.toFixed(2));
+        crypto.profit = ((price/crypto.averagePrice - 1) * 100).toFixed(2);
 
     });
 
-    currentValue= portfolio.reduce((acc, crypto) => acc += crypto.quantity * crypto.currentPrice, 0);
-    
+    totalCost = portfolio.reduce((acc, crypto) => acc + crypto.totalPaid, 0); 
+
     portfolio.map(crypto => {
-        crypto.walletPercentage = (crypto.totalPaid / currentValue) * 100 ;
+        crypto.walletPercentage =  Math.round((crypto.totalPaid / totalCost) * 100);
     })
 
     return portfolio;
 }
 
-output();
+createOutput();
 

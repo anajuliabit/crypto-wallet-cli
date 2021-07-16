@@ -4,7 +4,8 @@ export type Cryptocurrency = {
     averagePrice: number;
     currentPrice: number;
     totalPaid: number;
-    profit: number;
+    currentValue: number;
+    profit: string;
     walletPercentage?: number;
   };
   
