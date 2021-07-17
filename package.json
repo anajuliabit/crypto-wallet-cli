@@ -1,15 +1,32 @@
 {
-  "name": "crypto-portfolio-CLI",
+  "name": "crypto-wallet-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "A CLI to manage your cryptocurrencies wallet profit",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "crypto-wallet": "bin/crypto-wallet.ts"
+  },
   "scripts": {
     "dev": "nodemon",
-    "start": "ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anajuliabit/crypto-portfolio-cli"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "cryptocurrencies",
+    "cli",
+    "crypto",
+    "coins",
+    "bitcoin",
+    "ethereum"
+  ],
+  "author": "anajuliabit",
+  "license": "MIT",
   "devDependencies": {
     "@types/cli-table": "^0.3.0",
     "@types/node": "^16.3.2",

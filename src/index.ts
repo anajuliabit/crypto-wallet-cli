@@ -8,7 +8,7 @@ import { Transaction, Cryptocurrency, TransactionType } from "./models";
 import { groupBy, getCryptoPrice } from './utils';
 
 const cli = new Command();
-cli.version('0.0.1').option('-p, --path <path>', 'Path to transactions file').parse(process.argv);
+cli.version('0.0.1',  '-v, --vers', 'output the current version').requiredOption('-p, --path <path>', 'Path to transactions file').parse(process.argv);
 
 const { path } = cli.opts();
 const { transactions } = JSON.parse(fs.readFileSync(path, "utf8"));
@@ -23,8 +23,8 @@ async function createOutput() {
         'Current value',
         'Average price',
         'Current price',
-        'Profit %',
         'Wallet %',
+        'Profit %',
       ]});
     
     const portfolio = await getPortfolio(transactions as Transaction[]);
@@ -32,7 +32,7 @@ async function createOutput() {
     portfolio.map(crypto => {
         const { profit } = crypto;
         crypto.coin = chalk.bold(crypto.coin);
-        crypto.profit = Number(profit) > 0 ? chalk.green(profit) : chalk.redBright(Number(profit) * -1);
+        crypto.profit = Number(profit) >= 0 ? chalk.green(profit) : chalk.redBright(Number(profit) * -1);
         table.push(Object.values(crypto));
     });
     
@@ -40,9 +40,9 @@ async function createOutput() {
     const profit: number =  ((currentValue/totalCost - 1) * 100);
     const profitFormat = (profit < 1 ? profit * - 1 : profit).toFixed(2);
 
-    console.log('Total cost:', chalk.blue(totalCost, '$'));
-    console.log('Current value $:', chalk.blue(currentValue, '$'));
-    console.log('Profit:', profit - 1 ? chalk.redBright(profitFormat, '%') : chalk.green(profitFormat, '%'))
+    console.log(chalk.bold('TOTAL COST:'), chalk.blue(totalCost, '$'));
+    console.log(chalk.bold('CURRENT VALUE:'), chalk.blue(currentValue, '$'));
+    console.log(chalk.bold('PROFIT:'), profit >= 1 ? chalk.green(profitFormat, '%') : chalk.redBright(profitFormat, '%'))
     console.log(table.toString());
 }
 
@@ -79,24 +79,21 @@ const calculateCryptoResult = async(portfolio: Cryptocurrency[]): Promise<Crypto
 
     const tokens = portfolio.map(currency => currency.coin);
     const prices = await getCryptoPrice(tokens);
+    totalCost = portfolio.reduce((acc, crypto) => acc + crypto.totalPaid, 0); 
 
     portfolio.map(crypto => {
         const { usd } = prices![crypto.coin.toLocaleLowerCase()];
         const price = Number(usd);
-
+        
+        crypto.quantity = Number(crypto.quantity.toFixed(4));
         crypto.totalPaid =  Number(crypto.totalPaid.toFixed(2));
         crypto.currentValue = Number((crypto.quantity * price).toFixed(2))
         crypto.averagePrice = Number((crypto.totalPaid / crypto.quantity).toFixed(2));
         crypto.currentPrice = Number(price.toFixed(2));
+        crypto.walletPercentage =  Number(((crypto.totalPaid / totalCost) * 100).toFixed(2));
         crypto.profit = ((price/crypto.averagePrice - 1) * 100).toFixed(2);
 
     });
-
-    totalCost = portfolio.reduce((acc, crypto) => acc + crypto.totalPaid, 0); 
-
-    portfolio.map(crypto => {
-        crypto.walletPercentage =  Math.round((crypto.totalPaid / totalCost) * 100);
-    })
 
     return portfolio;
 }

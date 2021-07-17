@@ -1,0 +1,58 @@
+{
+    "transactions": [
+        {
+            "coin": "bitcoin",
+            "quantity": 0.5,
+            "totalPaid": 15000,
+            "type": "BUY"
+        },
+        {
+            "coin": "bitcoin",
+            "quantity": 1.5,
+            "totalPaid": 50000,
+            "type": "BUY"
+        },
+        {
+            "coin": "bitcoin",
+            "quantity": 1,
+            "totalPaid": 40000,
+            "type": "SELL"
+        },
+        {
+            "coin": "cardano",
+            "quantity": 200,
+            "totalPaid": 250,
+            "type": "BUY"
+        },
+        {
+            "coin": "cardano",
+            "quantity": 50,
+            "totalPaid": 60,
+            "type": "BUY"
+        },
+        {
+            "coin": "ethereum",
+            "quantity": 1,
+            "totalPaid": 1800,
+            "type": "BUY"
+        },
+        {
+            "coin": "ethereum",
+            "quantity": 1,
+            "totalPaid": 2000,
+            "type": "SELL"
+        },
+        {
+            "coin": "ethereum",
+            "quantity": 0.5,
+            "totalPaid": 1200,
+            "type": "BUY"
+        },
+        {
+            "coin": "cardano",
+            "quantity": 100,
+            "totalPaid": 135,
+            "type": "BUY"
+        }
+    ]
+}
