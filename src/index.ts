@@ -17,7 +17,7 @@ const { transactions } = JSON.parse(fs.readFileSync(path, "utf8"));
 
 let totalCost: number;
 
-async function createOutput() {
+async function bootstrap() {
     const table = new Table({ head: [
         'Coin', 
         'Quantity',
@@ -79,8 +79,7 @@ const reduceTransactions = (accumulator: Cryptocurrency, transaction: Transactio
 
 const calculateCryptoResult = async(portfolio: Cryptocurrency[]): Promise<Cryptocurrency[]> => {
 
-    const tokens = portfolio.map(currency => currency.coin);
-    const prices = await getCryptoPrice(tokens);
+    const prices = await getCryptoPrice(portfolio.map(currency => currency.coin));
     totalCost = portfolio.reduce((acc, crypto) => acc + crypto.totalPaid, 0); 
 
     portfolio.map(crypto => {
@@ -100,5 +99,5 @@ const calculateCryptoResult = async(portfolio: Cryptocurrency[]): Promise<Crypto
     return portfolio;
 }
 
-createOutput();
+bootstrap();
 
