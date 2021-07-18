@@ -5,8 +5,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "type": "module",
   "bin": {
-    "crypto-wallet": "bin/crypto-wallet.ts"
+    "crypto-wallet": "build/src/index.js"
   },
   "scripts": {
     "dev": "nodemon",

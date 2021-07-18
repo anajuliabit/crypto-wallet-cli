@@ -1,10 +1,12 @@
+#! /usr/bin/env node --experimental-specifier-resolution=node
+
 import 'dotenv/config'
 import fs from 'fs'
 import { Command } from 'commander';
 import Table from 'cli-table';
 import chalk from 'chalk';
 
-import { Transaction, Cryptocurrency, TransactionType } from "./models";
+import { Transaction, Cryptocurrency, TransactionType } from "./models/";
 import { groupBy, getCryptoPrice } from './utils';
 
 const cli = new Command();
