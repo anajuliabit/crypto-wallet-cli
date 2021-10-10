@@ -1,13 +1,13 @@
-#! /usr/bin/env node --experimental-specifier-resolution=node
+#! /usr/bin/env ts-node --experimental-specifier-resolution=node
 
-import 'dotenv/config'
-import fs from 'fs'
-import { Command } from 'commander';
-import Table from 'cli-table';
 import chalk from 'chalk';
+import Table from 'cli-table';
+import { Command } from 'commander';
+import 'dotenv/config';
+import fs from 'fs';
+import { Cryptocurrency, Transaction, TransactionType } from "./models/";
+import { getCryptoPrice, groupBy } from './utils';
 
-import { Transaction, Cryptocurrency, TransactionType } from "./models/";
-import { groupBy, getCryptoPrice } from './utils';
 
 const cli = new Command();
 cli.version('0.0.1',  '-v, --vers', 'output the current version').requiredOption('-p, --path <path>', 'Path to transactions file').parse(process.argv);
